@@ -1,40 +1,88 @@
 package com.noringerazancutyun.recyclerexample;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.ImageView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
-    private MyRecycler recycler;
-    private List<Model> listItems = new ArrayList<>();
+    private MyRecycler adapter;
+    private List<String> listItems = new ArrayList<>();
+    private List<String> list = new ArrayList<>();
+    private ImageView addButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        findMe();
         init();
-
-        recyclerView =findViewById(R.id.my_recycler);
-        recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
-
-        recycler = new MyRecycler(this, listItems);
-        recyclerView.setAdapter(recycler);
+        clickFloat();
+        deleteListener();
     }
+
+    public void findMe(){
+
+        addButton = findViewById(R.id.floatingActionButton);
+        recyclerView =findViewById(R.id.my_recycler);
+        adapter = new MyRecycler(MainActivity.this, list);
+        recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+
+    }
+
     private  void init(){
-        listItems = new ArrayList<>();
-        listItems.add(new Model("Armenia", R.drawable.armenia));
-        listItems.add(new Model("Germany", R.drawable.germany));
-        listItems.add(new Model("Russia", R.drawable.russia));
-        listItems.add(new Model("England", R.drawable.england));
-        listItems.add(new Model("Belgium", R.drawable.belgium));
-        listItems.add(new Model("Holand", R.drawable.niderland));
+        listItems.add("Armenia");
+        listItems.add("Germany");
+        listItems.add("Japan");
+        listItems.add("Russia");
+        listItems.add("China");
+        listItems.add("England");
+        listItems.add("USA");
+        listItems.add("Canada");
+        listItems.add("Nigeria");
+        listItems.add("Egipt");
+    }
+
+    public void clickFloat(){
+
+        addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Random random = new Random();
+                int count =random.nextInt(10);
+                if(count ==0){
+                    list.add((listItems.get(count)));
+                }else{
+                    list.add((listItems.get(count-1)));
+                }
+                recyclerView.setAdapter(adapter);
+            }
+        });
+    }
+
+    public void removeItem(int position) {
+
+        list.remove(position);
+        adapter.notifyItemRemoved(position);
+    }
+
+    public void deleteListener() {
+
+        adapter.setOnItemClickListener(new MyRecycler.OnItemClickListener() {
+            @Override
+            public void onDeleteClick(int position) {
+                removeItem(position);
+            }
+        });
     }
 }
